@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit>
+    
+    <php>
+        <!-- Inserisci qui i dati reali per l'ambiente di pre-produzione -->
+        <env name="IPAC_TOKEN_ENDPOINT" value="https://identity.cloud.sbn.it/oauth2/token"/>
+        <env name="IPAC_CLIENT_ID" value="YYYYYYYYYYYYYY"/>      <!-- INSERISCI QUI IL TUO CLIENT ID REALE -->
+        <env name="IPAC_CLIENT_SECRET" value="XXXXXXXXXXXXXXX"/> <!-- INSERISCI QUI IL TUO CLIENT SECRET REALE -->
+    </php>
+
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+    </testsuites>
+
+</phpunit>

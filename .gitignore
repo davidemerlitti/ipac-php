@@ -1,0 +1,22 @@
+# Dipendenze di Composer
+/vendor/
+
+# Eseguibile di Kiota
+/kiota/
+
+# Codice client API generato
+# La fonte di verità è lo script generatore, non l'output!
+/src/IPaC/
+
+# Definizioni API scaricate (artefatti)
+/api-definitions/
+
+# File di configurazione locale di NetBeans
+/nbproject/
+
+# File di configurazione locale di PHPUnit (se lo crei)
+phpunit.xml
+
+# File di log o di output temporanei
+*.log
+*.phpunit.result.cache

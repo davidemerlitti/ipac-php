@@ -19,7 +19,7 @@ Suite di client PHP per le API della piattaforma [I.PaC](https://ispc-preprod.pr
 
 1.  **Clonare il repository:**
     ```bash
-    git clone https://github.com/TUO_USERNAME/ipac-php.git
+    git clone https://github.com/davidemerlitti/ipac-php.git
     cd ipac-php
     ```
 

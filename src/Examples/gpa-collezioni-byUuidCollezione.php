@@ -20,7 +20,7 @@ use Microsoft\Kiota\Abstractions\Authentication\BaseBearerTokenAuthenticationPro
 use Microsoft\Kiota\Http\GuzzleRequestAdapter;
 use App\IPaCAccessTokenProvider;
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/../../vendor/autoload.php';
 
 $clientId = getenv('IPAC_CLIENT_ID') ?: 'YOUR_CLIENT_ID'; // Legge da variabili d'ambiente o usa un placeholder
 $clientSecret = getenv('IPAC_CLIENT_SECRET') ?: 'YOUR_CLIENT_SECRET';

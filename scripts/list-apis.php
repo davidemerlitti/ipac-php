@@ -18,7 +18,7 @@
  */
 namespace App\Utils;
 
-include "../vendor/autoload.php";
+include __DIR__ . "/../vendor/autoload.php";
 
 use cebe\openapi\Reader;
 

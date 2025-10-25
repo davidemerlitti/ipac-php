@@ -47,7 +47,8 @@ Per eseguirlo, imposta le tue credenziali come variabili d'ambiente e lancia lo 
 ```bash
 export IPAC_CLIENT_ID="il_tuo_client_id"
 export IPAC_CLIENT_SECRET="il_tuo_client_secret"
-php Examples/gpa-collezioni-byUuidCollezione.php```
+php Examples/gpa-collezioni-byUuidCollezione.php
+```
 
 ### Strumenti di Utilità
 

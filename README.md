@@ -31,7 +31,7 @@ Suite di client PHP per le API della piattaforma [I.PaC](https://ispc-preprod.pr
 3.  **Generare i client API:**
     Questo script è il cuore del progetto. Scarica le definizioni e genera tutto il codice sorgente dei client nella cartella `src/IPaC`, creando un sotto-namespace per ogni gruppo di API (es. `GPA`, `CAP`, ecc.).
     ```bash
-    php generate-clients.php
+    php scripts/generate-api-clients.php
     ```
 
 ## Utilizzo
@@ -54,7 +54,7 @@ php Examples/gpa-collezioni-byUuidCollezione.php
 
 -   **`list-apis.php`**: Uno script a riga di comando che contatta l'endpoint I.PaC, scarica l'elenco di tutte le API disponibili e ne stampa i dettagli principali (titolo, versione, URL della specifica). Utile per avere una panoramica aggiornata dell'offerta API.
     ```bash
-    php list-apis.php
+    php scripts/list-apis.php
     ```
 
 ## Testing

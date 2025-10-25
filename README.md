@@ -29,9 +29,15 @@ Suite di client PHP per le API della piattaforma [I.PaC](https://ispc-preprod.pr
     ```
 
 3.  **Generare i client API:**
+
     Questo script è il cuore del progetto. Scarica le definizioni e genera tutto il codice sorgente dei client nella cartella `src/IPaC`, creando un sotto-namespace per ogni gruppo di API (es. `GPA`, `CAP`, ecc.).
     ```bash
     php scripts/generate-api-clients.php
+    ```
+
+    NOTA: Se kiota viene installato in una directory diversa dalla root del progetto bisogna modificare la riga del file `scripts/generate-api-clients.php`
+    ```php
+    $kiotaPath = __DIR__ . '/kiota/kiota.exe';
     ```
 
 ## Utilizzo

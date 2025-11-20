@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 echo "=================================================\n";
-echo "  I.PaC API Client Generator via Kiota (v3.2)   \n";
+echo "  I.PaC API Client Generator via Kiota (v4.0)   \n";
 echo "=================================================\n\n";
 
 // =============================================================================
@@ -16,10 +16,10 @@ echo "=================================================\n\n";
 $hostUrl = "https://ispc-preprod.prod.os01.ocp.cineca.it";
 $specListUrl = "$hostUrl/swagger/spec/";
 
-$kiotaPath = __DIR__ . '/kiota/kiota.exe';
-$definitionsDir = __DIR__ . '/api-definitions';
+$kiotaPath = __DIR__ . '/../kiota/kiota.exe';
+$definitionsDir = __DIR__ . '/../api-definitions';
 
-$outputBaseDir = __DIR__ . '/src/IPaC';
+$outputBaseDir = __DIR__ . '/../src/IPaC';
 $baseNamespace = 'IPaC';
 
 $prefixToGroupName = [
@@ -28,6 +28,15 @@ $prefixToGroupName = [
     'batch' => 'Batch',
     'ingestion' => 'Ingestion', 
     'publicapi' => 'PublicAPI'
+];
+
+// Mappa i gruppi di API ai loro host di pre-produzione corretti (dal file CSV)
+$groupToHostMap = [
+    'GPA' => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gparisorsadigitale',
+    'CAP' => 'https://cap-apicast-preprod.prod.os01.ocp.cineca.it/capautorizzazionesoggettosistema',
+    'Batch' => 'https://cap-apicast-preprod.prod.os01.ocp.cineca.it/capautorizzazionesoggettosistema',
+    'Ingestion' => 'https://ingestion-apicast-preprod.prod.os01.ocp.cineca.it/ingestioning',
+    'PublicAPI' => 'https://publicapi-apicast-preprod.prod.os01.ocp.cineca.it/publicapipublicresource',
 ];
 
 // =============================================================================
@@ -80,8 +89,14 @@ try {
             // --- 2c: MODIFICA IL JSON IN MEMORIA ---
             echo "   -> Modifica dell'URL del server nella definizione...\n";
             $specData = json_decode($specJsonContent, true);
-            $clientBaseUrl = $hostUrl . dirname($specPath); // Calcola l'URL pubblico corretto
+            
+            $clientBaseUrl = $groupToHostMap[$groupName] ?? null;
 
+            if (!$clientBaseUrl) {
+                echo "   -> ATTENZIONE: Nessun host mappato per il gruppo '$groupName'. Salto.\n";
+                continue;
+            }
+            
             if (isset($specData['servers']) && is_array($specData['servers'])) {
                 foreach ($specData['servers'] as &$server) { // Usa un riferimento per modificare l'array originale
                     if (isset($server['url'])) {

@@ -3,7 +3,7 @@
 namespace Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use App\IPaCAccessTokenProvider; // <-- Assicurati che il namespace sia corretto
+use IPaC\IPaCAccessTokenProvider;
 
 class AuthenticationTest extends TestCase
 {
@@ -28,7 +28,7 @@ class AuthenticationTest extends TestCase
         }
 
         // Inizializza il provider con i dati reali
-        $this->tokenProvider = new IPaCAccessTokenProvider($clientId, $clientSecret, $tokenEndpoint);
+        $this->tokenProvider = new App\IPaCAccessTokenProvider($clientId, $clientSecret, $tokenEndpoint);
     }
 
     /**

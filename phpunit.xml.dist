@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+    bootstrap="vendor/autoload.php"  
+    colors="true"
+>
     
     <php>
         <!-- Inserisci qui i dati reali per l'ambiente di pre-produzione -->
-        <env name="IPAC_TOKEN_ENDPOINT" value="https://identity.cloud.sbn.it/oauth2/token"/>
-        <env name="IPAC_CLIENT_ID" value="YYYYYYYYYYYYYY"/>      <!-- INSERISCI QUI IL TUO CLIENT ID REALE -->
-        <env name="IPAC_CLIENT_SECRET" value="XXXXXXXXXXXXXXX"/> <!-- INSERISCI QUI IL TUO CLIENT SECRET REALE -->
+        <env name="PROD_IPAC_TOKEN_ENDPOINT" value="https://identity.cloud.sbn.it/oauth2/token"/>
+        <env name="IPAC_TOKEN_ENDPOINT" value="https://ecomic-iam-identity-collaudo.cultura.gov.it/oauth2/token"/>
+        <env name="IPAC_CLIENT_ID" value=""/>
+        <env name="IPAC_CLIENT_SECRET" value=""/>
     </php>
 
     <testsuites>
@@ -14,6 +20,7 @@
         </testsuite>
         <testsuite name="Integration">
             <directory>tests/Integration</directory>
+            <exclude>tests/Integration/AuthenticatedTest.php</exclude>
         </testsuite>
     </testsuites>
 

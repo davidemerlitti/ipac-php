@@ -2,36 +2,52 @@
 
 namespace Tests\Integration;
 
+use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 use Microsoft\Kiota\Http\GuzzleRequestAdapter;
-use App\IPaCAccessTokenProvider; // Il tuo provider di token
+use App\IPaCAccessTokenProvider;
+use Microsoft\Kiota\Abstractions\Authentication\BaseBearerTokenAuthenticationProvider;
 
-// Importa i client API generati da Kiota
-use IPaC\GPA\OggettoDigitale\Client as OggettoDigitaleClient;
-use IPaC\GPA\GestioneBitstream\Client as GestioneBitstreamClient;
-// ... importa altri client di cui potresti aver bisogno ...
+// Importa i client API
+use IPaC\CAP\AutorizzazioneSoggettoSistema\Client\Client as CapClient;
+use IPaC\GPA\RisorsaDigitale\Client\Client as RisorsaDigitaleClient;
+use IPaC\GPA\OggettoDigitale\Client\Client as OggettoDigitaleClient;
+use IPaC\GPA\GestioneBitstream\Client\Client as GestioneBitstreamClient;
 
-/**
- * Classe base per tutti i test di integrazione che richiedono autenticazione.
- * Prepara automaticamente un RequestAdapter e i client API prima di ogni test.
- */
+// Importa il DTO CORRETTO per il contesto di sicurezza
+use IPaC\CAP\AutorizzazioneSoggettoSistema\Client\Models\AutenticazionePostRequestDTO;
+
 abstract class AuthenticatedTest extends TestCase
 {
     protected GuzzleRequestAdapter $requestAdapter;
     
-    // Proprietà per accedere facilmente ai client API nei test
+    // Usiamo proprietà statiche per "mettere in cache" i client già inizializzati
+    private static ?CapClient $staticCapClient = null;
+    private static ?RisorsaDigitaleClient $staticRisorsaDigitaleClient = null;
+    private static ?OggettoDigitaleClient $staticOggettoDigitaleClient = null;
+    private static ?GestioneBitstreamClient $staticGestioneBitstreamClient = null;
+
+    // Usiamo proprietà di istanza che i test useranno
+    protected CapClient $capClient;
+    protected RisorsaDigitaleClient $risorsaDigitaleClient;
     protected OggettoDigitaleClient $oggettoDigitaleClient;
     protected GestioneBitstreamClient $gestioneBitstreamClient;
-    // ... aggiungi altre proprietà per altri client ...
-
-    /**
-     * Questo metodo viene eseguito da PHPUnit prima di ogni singolo metodo di test.
-     */
+    
     protected function setUp(): void
     {
         parent::setUp();
-
-        // 1. Leggi le credenziali dal file phpunit.xml.dist
+        
+        // Se i client sono già inizializzati, non fare nulla.
+        if (self::$staticCapClient !== null) {
+            $this->capClient = self::$staticCapClient;
+            $this->risorsaDigitaleClient = self::$staticRisorsaDigitaleClient;
+            $this->oggettoDigitaleClient = self::$staticOggettoDigitaleClient;
+            $this->gestioneBitstreamClient = self::$staticGestioneBitstreamClient;
+            return;
+        }
+        
+        echo "\n--- ESEGUO SETUP GLOBALE (UNA TANTUM) ---\n";
+        
         $tokenEndpoint = getenv('IPAC_TOKEN_ENDPOINT');
         $clientId = getenv('IPAC_CLIENT_ID');
         $clientSecret = getenv('IPAC_CLIENT_SECRET');
@@ -40,15 +56,57 @@ abstract class AuthenticatedTest extends TestCase
             $this->markTestSkipped('Le credenziali per i test di integrazione non sono configurate.');
         }
 
-        // 2. Prepara l'autenticazione
+        // --- FASE 1: Autenticazione ---
         $tokenProvider = new IPaCAccessTokenProvider($clientId, $clientSecret, $tokenEndpoint);
-        $this->requestAdapter = new GuzzleRequestAdapter($tokenProvider);
+        $authProvider = new BaseBearerTokenAuthenticationProvider($tokenProvider);
+        
+        self::$staticCapClient = new CapClient(new GuzzleRequestAdapter($authProvider, null, null, new Client()));
+        $this->capClient = self::$staticCapClient;
+        
+        self::$staticRisorsaDigitaleClient = new RisorsaDigitaleClient(new GuzzleRequestAdapter($authProvider, null, null, new Client()));
+        $this->risorsaDigitaleClient = self::$staticRisorsaDigitaleClient;
+        
+        self::$staticOggettoDigitaleClient = new OggettoDigitaleClient(new GuzzleRequestAdapter($authProvider, null, null, new Client()));
+        $this->oggettoDigitaleClient = self::$staticOggettoDigitaleClient;
+        
+        self::$staticGestioneBitstreamClient = new GestioneBitstreamClient(new GuzzleRequestAdapter($authProvider, null, null, new Client()));
+        $this->gestioneBitstreamClient = self::$staticGestioneBitstreamClient;
+        
+        // --- FASE 2: Creazione Contesto di Sicurezza ---
+        echo "\nStep 1.5: Impostazione del Contesto di Sicurezza...";
+        
+        $securityContextPayload = [
+            "sistemaUUID" => "24BC937BB382B28FE0630204FE0AA7DF",
+            "enteAderenteUUID" => "438F25ED07B8A720E0630204FE0AD634",
+            "tenancyUUID" => "438F25ED07BAA720E0630204FE0AD634",
+            "labelDescrittivaUtente" => "Davide Merlitti (Test)",
+            "idUtente" => "1",
+            "codiceRuolo" => "ADMICCD"
+        ];
+        
+        try {
+            // Usa il DTO corretto
+            $securityDto = new AutenticazionePostRequestDTO();
+            
+            // Popola il DTO usando i metodi set corretti
+            $securityDto->setSistemaUUID($securityContextPayload['sistemaUUID']);
+            $securityDto->setEnteAderenteUUID($securityContextPayload['enteAderenteUUID']);
+            $securityDto->setTenancyUUID($securityContextPayload['tenancyUUID']);
+            $securityDto->setLabelDescrittivaUtente($securityContextPayload['labelDescrittivaUtente']);
+            $securityDto->setIdUtente($securityContextPayload['idUtente']);
+            $securityDto->setCodiceRuolo($securityContextPayload['codiceRuolo']);
+            
+            // Esegui la chiamata POST all'endpoint corretto
+            self::$staticCapClient->api()->v1()->cap()->autorizzazionesoggettosistema()->predisponeAutenticazione()->post($securityDto)->wait();
+            
+            echo " OK";
 
-        // 3. Inizializza i client API con l'adapter autenticato
-        //    Ora ogni chiamata fatta da questi client includerà automaticamente il token Bearer.
-        $this->oggettoDigitaleClient = new OggettoDigitaleClient($this->requestAdapter);
-        $this->gestioneBitstreamClient = new GestioneBitstreamClient($this->requestAdapter);
-        // ... istanzia altri client qui ...
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            if ($e->getPrevious() instanceof \GuzzleHttp\Exception\RequestException && $e->getPrevious()->hasResponse()) {
+                $errorMessage = $e->getPrevious()->getResponse()->getBody()->getContents();
+            }
+            $this->fail("Impossibile impostare il contesto di sicurezza: " . $errorMessage);
+        }
     }
 }
-

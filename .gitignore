@@ -20,3 +20,9 @@ phpunit.xml
 # File di log o di output temporanei
 *.log
 *.phpunit.result.cache
+
+# Cartella con la docs generata da phpdocumentor
+/docs/
+
+# Cartella di phpDocumentor
+/.phpdoc/

@@ -26,8 +26,8 @@
     },
     "autoload": {
         "psr-4": {
-            "IPaC\\Client\\": "./src/IPaC/Client/",
-            "App\\": "./"
+            "IPaC\\": "./src/IPaC/",
+            "App\\": "./src/"
         }
     },
     "require-dev": {

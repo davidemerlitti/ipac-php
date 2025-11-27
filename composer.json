@@ -1,10 +1,10 @@
 {
-    "name": "vendor/ipac-test",
-    "description": "Description of project ipac-test.",
+    "name": "vendor/ipac-php",
+    "description": "Libreria php per utilizzare l'API I.PaC [https://ecomic.cultura.gov.it/ipac]",
     "authors": [
         {
-            "name": "DavideMerlitti",
-            "email": "your@email.here"
+            "name": "Davide Merlitti",
+            "email": "dmerlitti@gmail.com"
         }
     ],
     "require": {
@@ -17,11 +17,13 @@
         "microsoft/kiota-serialization-text": "^1.1",
         "php-http/promise": "^1.2",
         "microsoft/kiota-serialization-form": "^1.1",
-        "microsoft/kiota-serialization-multipart": "^1.0"
+        "microsoft/kiota-serialization-multipart": "^1.0",
+        "vlucas/phpdotenv": "^5.6"
     },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "tbachert/spi": true
         }
     },
     "autoload": {

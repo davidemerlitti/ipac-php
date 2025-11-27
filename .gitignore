@@ -10,6 +10,9 @@
 # Le costanti IPaC
 !/src/IPaC/Constants/
 
+# IPaC AccessTokenProvider
+!/src/IPaC/AccessTokenProvider.php
+
 # Definizioni API scaricate (artefatti)
 /api-definitions/
 

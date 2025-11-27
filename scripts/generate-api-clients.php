@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 echo "=================================================\n";
-echo "  I.PaC API Client Generator via Kiota (v4.0)   \n";
+echo "  I.PaC API Client Generator via Kiota (v4.1)   \n";
 echo "=================================================\n\n";
 
 // =============================================================================
@@ -30,11 +30,29 @@ $prefixToGroupName = [
     'publicapi' => 'PublicAPI'
 ];
 
-// Mappa i gruppi di API ai loro host di pre-produzione corretti (dal file CSV)
 $groupToHostMap = [
-    'GPA' => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gparisorsadigitale',
-    'CAP' => 'https://cap-apicast-preprod.prod.os01.ocp.cineca.it/capautorizzazionesoggettosistema',
-    'Batch' => 'https://cap-apicast-preprod.prod.os01.ocp.cineca.it/capautorizzazionesoggettosistema',
+    'GPA' => [
+      'RisorsaDigitale' => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gparisorsadigitale',
+      'OggettoDigitale' => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpaoggettodigitale',
+      'Collezioni'      => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpacollezioni',        
+      'GestioneBitstream'      => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpagestionebitstream',
+      'StrutturaFisicaLogica'  => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpastrutturafisicalogica',
+      'GestioneThumbnail'      => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpagestionethumbnail',
+      'GetMasterTecnico'       => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpagetmastertecnico',
+      'ImpostaPerRendition'    => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpaimpostaperrendition',
+      'MediaSuMediaServer'     => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpamediasumediaserver',
+      'Tag'                    => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpatag',
+      'LeggiManifestIIIF'      => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpaleggimanifestiiif', // o gpaleggimanifestiiif
+      'Ricercaentitadigitali'  => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gparicercaentitadigitali',
+      'DownloadRisorsaDigitale'=> 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/gpadownloadrisorsadigitale',
+    ],
+    'CAP' => [
+      'AutorizzazioneSoggettoSistema' => 'https://cap-apicast-preprod.prod.os01.ocp.cineca.it/capautorizzazionesoggettosistema',
+      'AnagraficheRuoliServizi' => 'https://cap-apicast-preprod.prod.os01.ocp.cineca.it/capanagraficheruoliservizi'
+    ],
+    'Batch' => [
+      'Asincrono' => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/batch'
+    ],
     'Ingestion' => 'https://ingestion-apicast-preprod.prod.os01.ocp.cineca.it/ingestioning',
     'PublicAPI' => 'https://publicapi-apicast-preprod.prod.os01.ocp.cineca.it/publicapipublicresource',
 ];
@@ -90,8 +108,18 @@ try {
             echo "   -> Modifica dell'URL del server nella definizione...\n";
             $specData = json_decode($specJsonContent, true);
             
-            $clientBaseUrl = $groupToHostMap[$groupName] ?? null;
-
+            $map = $groupToHostMap[$groupName] ?? null;
+            if (is_string($map)) {
+              $clientBaseUrl = $map;
+            } else if (is_array($map)) {
+              if (array_key_exists($apiName, $map)) {
+                $clientBaseUrl = $map[$apiName];
+              } else {
+                echo "   -> ATTENZIONE: l'api $apiName non è mappata nel gruppo $groupName\n";
+                continue;
+              }
+            }
+            
             if (!$clientBaseUrl) {
                 echo "   -> ATTENZIONE: Nessun host mappato per il gruppo '$groupName'. Salto.\n";
                 continue;

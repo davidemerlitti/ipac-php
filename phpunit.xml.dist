@@ -12,6 +12,13 @@
         <env name="IPAC_TOKEN_ENDPOINT" value="https://ecomic-iam-identity-collaudo.cultura.gov.it/oauth2/token"/>
         <env name="IPAC_CLIENT_ID" value=""/>
         <env name="IPAC_CLIENT_SECRET" value=""/>
+        <!-- parametri necessari per ottenere il contesto di sicurezza -->
+        <env name="sistemaUUID" value=""/>
+        <env name="enteAderenteUUID" value=""/>
+        <env name="tenancyUUID" value=""/>
+        <env name="labelDescrittivaUtente" value=""/>
+        <env name="idUtente" value=""/>
+        <env name="codiceRuolo" value=""/>
     </php>
 
     <testsuites>

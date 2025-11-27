@@ -2,16 +2,7 @@
 /**
  * Examples/gpa-collezioni-byUuidCollezione.php
  *
- * Esempio di utilizzo di un client API generato per recuperare una specifica
- * collezione dall'API GPA (Gestione del Patrimonio).
- *
- * Passaggi:
- * 1. Configura le credenziali (Client ID, Client Secret) e gli endpoint.
- * 2. Istanzia il IPaC\AccessTokenProvider per gestire l'autenticazione OAuth2.
- * 3. Crea un RequestAdapter di Kiota, che userà il token provider per autenticare ogni chiamata.
- * 4. Istanzia il client specifico per l'API delle Collezioni.
- * 5. Effettua la chiamata per ottenere una collezione tramite il suo UUID.
- * 6. Gestisce e stampa eventuali eccezioni.
+ * Recupera una collezione tramite UUID
  */
 namespace App\Examples;
 
@@ -43,7 +34,8 @@ if ($clientId === '' || $clientSecret === '') {
   die("Errore: Client ID e Client Secret non configurati. Controlla il file .env.\n");
 }
 
-$uuidCollezione = '00000000000000000000000000000000'; // Sostituisci con un UUID di una collezione esistente
+// Sostituisci con un UUID di una collezione esistente nella tenancy 
+$uuidCollezione = '';
 
 if ($uuidCollezione === '') {
   die("Errore: Inserisci un UUID valido per la collezione da cercare.\n");

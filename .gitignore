@@ -5,8 +5,10 @@
 /kiota/
 
 # Codice client API generato
-# La fonte di verità è lo script generatore, non l'output!
-/src/IPaC/
+/src/IPaC/*
+
+# Le costanti IPaC
+!/src/IPaC/Constants/
 
 # Definizioni API scaricate (artefatti)
 /api-definitions/

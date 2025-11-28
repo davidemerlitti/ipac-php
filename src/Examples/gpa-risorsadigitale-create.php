@@ -111,9 +111,10 @@ try {
     echo "Nessuna licenza disponibile\n";
   }
   
-  // Controlla se la licenza da impostare per la risorsa digitale è compresa
+  // Controlla se la licenza da impostare CC-BY per la risorsa digitale è compresa
   // tra quelle disponibili per la tenancy
-  if(in_array($tenancyUUID, $licenze)) {
+  if(array_filter($licenze, function($licenza) { 
+    return $licenza->getUuid() == Preprod::CC_BY; })) {
     echo "FASE 2: Eseguo la creazione di una risorsa digitale sull'endpoint GPA...\n";
 
     $risorsaDigitaleRequest = new CreaRisorsaDigitaleRequestDTO();

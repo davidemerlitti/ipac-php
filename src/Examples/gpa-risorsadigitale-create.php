@@ -102,27 +102,40 @@ try {
   $accessToken = $tokenProvider->getAuthorizationTokenAsync('')->wait();
   
   // Recupera l'elenco delle licenze disponibili per la tenancy in sessione
-  //$responseLicenze = $capAnaClient->api()->v1()->cap()->gestionetenancy()->licenza()->readByTenancy()->get()->wait();
-    
-  echo "FASE 2: Eseguo la creazione di una risorsa digitale sull'endpoint GPA...\n";
-    
-  $risorsaDigitaleRequest = new CreaRisorsaDigitaleRequestDTO();
-  $risorsaDigitaleRequest->setTitolo('Test Contenitore per Oggetto ' . uniqid());
-  $risorsaDigitaleRequest->setUuidLicenza(Preprod::CC_BY);
-  $risorsaDigitaleRequest->setAutore('gpa-risorsadigitale-create.php');
-  $risorsaDigitaleRequest->setDescrizione('Questa è una descrizione generata automaticamente dal test.');
-  $risorsaDigitaleRequest->setNote('Nessuna nota particolare.');
-  $risorsaDigitaleRequest->setIdConservatore('00000000000');
-  $risorsaDigitaleRequest->setIdConservatoreAuthority('CF');
-  $risorsaDigitaleRequest->setUuidTenancy($uuidTenancy);
-    
-  try {
-      $nuovaRisorsaDigitale = $gpaClient->api()->v1()->gpa()->risorseDigitali()->post($risorsaDigitaleRequest)->wait();
-      $uuid = $nuovaRisorsaDigitale->getUuid();  
-      echo "Creata la risorse digitale con UUID $uuid\n";
-  } catch (\Exception $e) {
-    echo "Si è verificato un errore durante la creazione della nuova risorsa digitale:\n";
-    echo $e->getMessage();
+  $licenze = $capAnaClient->api()->v1()->cap()->gestionetenancy()->licenza()->readByTenancy()->get()->wait();
+  
+  echo "Licenze disponibili per la tenancy '$tenancyUUID'\n";
+  if ($licenze) {
+    print_r($licenze);
+  } else {
+    echo "Nessuna licenza disponibile\n";
+  }
+  
+  // Controlla se la licenza da impostare per la risorsa digitale è compresa
+  // tra quelle disponibili per la tenancy
+  if(in_array($tenancyUUID, $licenze)) {
+    echo "FASE 2: Eseguo la creazione di una risorsa digitale sull'endpoint GPA...\n";
+
+    $risorsaDigitaleRequest = new CreaRisorsaDigitaleRequestDTO();
+    $risorsaDigitaleRequest->setTitolo('Test Contenitore per Oggetto ' . uniqid());
+    $risorsaDigitaleRequest->setUuidLicenza(Preprod::CC_BY);
+    $risorsaDigitaleRequest->setAutore('gpa-risorsadigitale-create.php');
+    $risorsaDigitaleRequest->setDescrizione('Questa è una descrizione generata automaticamente dal test.');
+    $risorsaDigitaleRequest->setNote('Nessuna nota particolare.');
+    $risorsaDigitaleRequest->setIdConservatore('00000000000');
+    $risorsaDigitaleRequest->setIdConservatoreAuthority('CF');
+    $risorsaDigitaleRequest->setUuidTenancy($uuidTenancy);
+
+    try {
+        $nuovaRisorsaDigitale = $gpaClient->api()->v1()->gpa()->risorseDigitali()->post($risorsaDigitaleRequest)->wait();
+        $uuid = $nuovaRisorsaDigitale->getUuid();  
+        echo "Creata la risorse digitale con UUID $uuid\n";
+    } catch (\Exception $e) {
+      echo "Si è verificato un errore durante la creazione della nuova risorsa digitale:\n";
+      echo $e->getMessage();
+    }
+  } else {
+    echo "Impossibile creare la risorsa digitale perché la licenza specificata non è tra quelle disponibili.\n";
   }
   
 } catch(\Exception $e) {

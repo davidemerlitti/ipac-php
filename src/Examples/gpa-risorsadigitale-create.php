@@ -29,10 +29,10 @@ if (file_exists(__DIR__.'/../../.env')) {
     $dotenv->load();
 }
 
-$clientId = $_ENV['IPAC_CLIENT_ID'] ?? '';
-$clientSecret = $_ENV['IPAC_CLIENT_SECRET'] ?? '';
-$tokenEndpoint = $_ENV['IPAC_TOKEN_ENDPOINT'] ?? '';
-if ($clientId === '' || $clientSecret === '') {
+$clientId = $_ENV['IPAC_CLIENT_ID'] ?? null;
+$clientSecret = $_ENV['IPAC_CLIENT_SECRET'] ?? null;
+$tokenEndpoint = $_ENV['IPAC_TOKEN_ENDPOINT'] ?? null;
+if ($clientId === null || $clientSecret === null || $tokenEndpoint === null) {
     die("Errore: Client ID e Client Secret non configurati. Controlla il file .env.\n");
 }
 
@@ -113,8 +113,11 @@ try {
   
   // Controlla se la licenza da impostare CC-BY per la risorsa digitale è compresa
   // tra quelle disponibili per la tenancy
-  if(array_filter($licenze, function($licenza) { 
-    return $licenza->getUuid() == Preprod::CC_BY; })) {
+  if(array_filter($licenze, function($licenza) {
+    $uuid1 = $licenza->getUuid();
+    $uuid2 = $licenza->getLicenza()->getUuid();
+    return ($licenza->getLicenza()->getUuid() == Preprod::CC_BY);
+  })) {
     echo "FASE 2: Eseguo la creazione di una risorsa digitale sull'endpoint GPA...\n";
 
     $risorsaDigitaleRequest = new CreaRisorsaDigitaleRequestDTO();
@@ -125,12 +128,12 @@ try {
     $risorsaDigitaleRequest->setNote('Nessuna nota particolare.');
     $risorsaDigitaleRequest->setIdConservatore('00000000000');
     $risorsaDigitaleRequest->setIdConservatoreAuthority('CF');
-    $risorsaDigitaleRequest->setUuidTenancy($uuidTenancy);
+    $risorsaDigitaleRequest->setUuidTenancy($tenancyUUID);
 
     try {
         $nuovaRisorsaDigitale = $gpaClient->api()->v1()->gpa()->risorseDigitali()->post($risorsaDigitaleRequest)->wait();
         $uuid = $nuovaRisorsaDigitale->getUuid();  
-        echo "Creata la risorse digitale con UUID $uuid\n";
+        echo "Creata la risorsa digitale con UUID $uuid\n";
     } catch (\Exception $e) {
       echo "Si è verificato un errore durante la creazione della nuova risorsa digitale:\n";
       echo $e->getMessage();

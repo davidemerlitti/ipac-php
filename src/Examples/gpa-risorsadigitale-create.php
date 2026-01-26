@@ -111,16 +111,20 @@ try {
     echo "Nessuna licenza disponibile\n";
   }
   
+  $useLicense = Preprod::CC_BY;
+  $useDefaultLicense = true;
+  
   // Controlla se la licenza da impostare CC-BY per la risorsa digitale è compresa
   // tra quelle disponibili per la tenancy
-  if(array_filter($licenze, function($licenza) {
-    return ($licenza->getLicenza()->getUuid() == Preprod::CC_BY);
-  })) {
+  if(array_filter($licenze, function($licenza) use ($useLicense) {
+    return ($licenza->getLicenza()->getUuid() == $useLicense);
+  }) || $useDefaultLicense) {
     echo "FASE 2: Eseguo la creazione di una risorsa digitale sull'endpoint GPA...\n";
 
     $risorsaDigitaleRequest = new CreaRisorsaDigitaleRequestDTO();
     $risorsaDigitaleRequest->setTitolo('Test Contenitore per Oggetto ' . uniqid());
-    $risorsaDigitaleRequest->setUuidLicenza(Preprod::CC_BY);
+    if (!$useDefaultLicense)
+      $risorsaDigitaleRequest->setUuidLicenza(Preprod::CC_BY);
     $risorsaDigitaleRequest->setAutore('gpa-risorsadigitale-create.php');
     $risorsaDigitaleRequest->setDescrizione('Questa è una descrizione generata automaticamente dal test.');
     $risorsaDigitaleRequest->setNote('Nessuna nota particolare.');
@@ -130,8 +134,8 @@ try {
 
     try {
         $nuovaRisorsaDigitale = $gpaClient->api()->v1()->gpa()->risorseDigitali()->post($risorsaDigitaleRequest)->wait();
-        $uuid = $nuovaRisorsaDigitale->getUuid();  
-        echo "Creata la risorsa digitale con UUID $uuid\n";
+        $uuid = $nuovaRisorsaDigitale->getChiaveRisorsaDigitaleISPC();  
+        echo "Creata la risorsa digitale con chiave $uuid\n";
     } catch (\Exception $e) {
       echo "Si è verificato un errore durante la creazione della nuova risorsa digitale:\n";
       echo $e->getMessage();

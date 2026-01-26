@@ -114,8 +114,6 @@ try {
   // Controlla se la licenza da impostare CC-BY per la risorsa digitale è compresa
   // tra quelle disponibili per la tenancy
   if(array_filter($licenze, function($licenza) {
-    $uuid1 = $licenza->getUuid();
-    $uuid2 = $licenza->getLicenza()->getUuid();
     return ($licenza->getLicenza()->getUuid() == Preprod::CC_BY);
   })) {
     echo "FASE 2: Eseguo la creazione di una risorsa digitale sull'endpoint GPA...\n";

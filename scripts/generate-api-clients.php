@@ -53,7 +53,14 @@ $groupToHostMap = [
     'Batch' => [
       'Asincrono' => 'https://gpa-apicast-preprod.prod.os01.ocp.cineca.it/batch'
     ],
-    'Ingestion' => 'https://ingestion-apicast-preprod.prod.os01.ocp.cineca.it/ingestioning',
+    'Batch' => [
+        'Asincrono' => 'https://batch-apicast-preprod.prod.os01.ocp.cineca.it/batchasincrono' // URL corretto da Perl
+    ],
+    'Ingestion' => [
+        'Upload' => 'https://ingestion-apicast-preprod.prod.os01.ocp.cineca.it/ingestionupload',
+        'ING' => 'https://ingestion-apicast-preprod.prod.os01.ocp.cineca.it/ingestioning',
+        'Validavmetsecomic' => 'https://ingestion-apicast-preprod.prod.os01.ocp.cineca.it/ingestioning' // Anche questo sembra puntare a 'ingestioning'
+    ],
     'PublicAPI' => 'https://publicapi-apicast-preprod.prod.os01.ocp.cineca.it/publicapipublicresource',
 ];
 
